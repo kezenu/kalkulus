@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Belajar Klasifikasi Jeruk</title>
+  </head>
+  <body>
+    <h2>🍊 Belajar Klasifikasi Jeruk</h2>
+
+    <form method="POST">
+      Diameter:
+      <input type="number" step="0.1" name="diameter" required /><br /><br />
+
+      Berat:
+      <input type="number" step="0.1" name="berat" required /><br /><br />
+
+      Tebal Kulit:
+      <input type="number" step="0.1" name="tebal_kulit" required /><br /><br />
+
+      Kadar Gula:
+      <input type="number" step="0.1" name="kadar_gula" required /><br /><br />
+
+      Asal Daerah:
+      <select name="asal_daerah">
+        <option value="Kalimantan">Kalimantan</option>
+        <option value="Jawa Tengah">Jawa Tengah</option>
+        <option value="Jawa Barat">Jawa Barat</option></select
+      ><br /><br />
+
+      Warna:
+      <select name="warna">
+        <option value="hijau">Hijau</option>
+        <option value="kuning">Kuning</option>
+        <option value="oranye">Oranye</option></select
+      ><br /><br />
+
+      Musim Panen:
+      <select name="musim_panen">
+        <option value="kemarau">Kemarau</option>
+        <option value="hujan">Hujan</option></select
+      ><br /><br />
+
+      <button type="submit">Prediksi</button>
+    </form>
+
+    {% if hasil %}
+    <h3>Hasil Prediksi: {{ hasil }}</h3>
+    <p>Tingkat Keyakinan: {{ confidence }}</p>
+    {% endif %}
+  </body>
+</html>

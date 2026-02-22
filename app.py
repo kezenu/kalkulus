@@ -1,28 +1,52 @@
-import streamlit as st
+from flask import Flask, render_template, request
 import pandas as pd
 import joblib
 
-st.set_page_config(
-    page_title="Belajar Klasifikasi Jeruk",
-    page_icon= ":tangerine:"
-)
+app = Flask(__name__)
 
-model = joblib.load('klasifikasi_jeruk.joblib')
+model = joblib.load("klasifikasi_jeruk.joblib")
 
-st.title(":tangerine: Belajar Klasifikasi Jeruk")
-st.markdown('aplikasi machine learning klasifikasi jeruk')
 
-diameter = st.slider('Diameter', 4.0, 10.0, 6.5)
-berat = st.slider('Berat', 100.0, 250.0, 210.0)
-tebal_kulit = st.slider('Tebal Kulit', 0.2, 1.0, 0.8)
-kadar_gula =st.slider('Kadar Gula', 8.0, 14.0, 12.0)
-asal_daerah = st.pills('Asal Daerah', ['Kalimantan', 'Jawa Tengah', 'Jawa Barat'], default='Kalimantan')
-warna = st.pills('Warna', ['hijau', 'kuning', 'oranye'], default='hijau')
-musim_panen = st.pills('Musim Panen', ['kemarau', 'hujan'], default='kemarau')
+@app.route("/", methods=["GET", "POST"])
+def index():
+    hasil = None
+    confidence = None
 
-if st.button('Prediksi', type='primary'):
-    data = pd.DataFrame([[diameter, berat, tebal_kulit, kadar_gula, asal_daerah, warna, musim_panen]], columns=['diameter', 'berat', 'tebal_kulit', 'kadar_gula', 'asal_daerah',
-       'warna', 'musim_panen'])
-    prediksi = model.predict(data)[0] 
-    persentase = max(model.predict_proba(data)[0])
-    st.success(f'Model memprediksi **{prediksi}**, dengan tingkat keyakinan {persentase:.2%}')
+    if request.method == "POST":
+        diameter = float(request.form["diameter"])
+        berat = float(request.form["berat"])
+        tebal_kulit = float(request.form["tebal_kulit"])
+        kadar_gula = float(request.form["kadar_gula"])
+        asal_daerah = request.form["asal_daerah"]
+        warna = request.form["warna"]
+        musim_panen = request.form["musim_panen"]
+
+        data = pd.DataFrame([[
+            diameter,
+            berat,
+            tebal_kulit,
+            kadar_gula,
+            asal_daerah,
+            warna,
+            musim_panen
+        ]], columns=[
+            'diameter',
+            'berat',
+            'tebal_kulit',
+            'kadar_gula',
+            'asal_daerah',
+            'warna',
+            'musim_panen'
+        ])
+
+        prediksi = model.predict(data)[0]
+        persentase = max(model.predict_proba(data)[0])
+
+        hasil = prediksi
+        confidence = f"{persentase:.2%}"
+
+    return render_template("index.html", hasil=hasil, confidence=confidence)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
